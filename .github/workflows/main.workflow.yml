@@ -1,0 +1,29 @@
+name: CICD-Challenge
+env:
+  deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+# Run Deployment post closing
+on:
+  pull_request:
+    types: closed
+    branches:
+      - main # only runs deploy after pushed to main
+
+jobs:
+  render-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: install dependencies
+        run: npm ci
+      - name: Render Deploy Action
+        env: 
+          DEPLOY_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: 
+          curl "$DEPLOY_URL"
