@@ -1,0 +1,27 @@
+ame: CICD-Challenge
+
+# Run tests for PRs to Develop branch
+on:
+  pull_request:
+    branches:
+      - develop # Run tests for PRs against develop branch
+
+jobs:
+  test-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: install dependencies
+        run: npm ci
+      - name: Cypress run component tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm run start
+          component: true # should run Component testing
